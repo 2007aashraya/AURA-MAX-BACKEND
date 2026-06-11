@@ -1,11 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
-const keys = require("./keys.json");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ─── READ KEYS FROM ENVIRONMENT VARIABLES ───────────────────────
+const DEEPSEEK_KEY = process.env.DEEPSEEK_KEY;
+const GROQ_KEY     = process.env.GROQ_KEY;
+const GEMINI_KEY   = process.env.GEMINI_KEY;
+const MISTRAL_KEY  = process.env.MISTRAL_KEY;
+const TOGETHER_KEY = process.env.TOGETHER_KEY;
+const QWEN_KEY     = process.env.QWEN_KEY;
 
 // ─── HEALTH CHECK ───────────────────────────────────────────────
 app.get("/", (req, res) => {
@@ -13,9 +20,6 @@ app.get("/", (req, res) => {
 });
 
 // ─── MAIN CHAT ROUTE ────────────────────────────────────────────
-// Frontend sends: { model: "deepseek-r1", message: "hello" }
-// Backend returns: { reply: "AI response here" }
-
 app.post("/api/chat", async (req, res) => {
   const { model, message } = req.body;
 
@@ -32,7 +36,7 @@ app.post("/api/chat", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${keys.DEEPSEEK_KEY}`
+          "Authorization": `Bearer ${DEEPSEEK_KEY}`
         },
         body: JSON.stringify({
           model: "deepseek-reasoner",
@@ -49,7 +53,7 @@ app.post("/api/chat", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${keys.QWEN_KEY}`
+          "Authorization": `Bearer ${QWEN_KEY}`
         },
         body: JSON.stringify({
           model: "qwen-max",
@@ -63,7 +67,7 @@ app.post("/api/chat", async (req, res) => {
     // ── Gemini 2.0 Flash ─────────────────────────────────────────
     else if (model === "gemini-flash") {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${keys.GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -82,7 +86,7 @@ app.post("/api/chat", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${keys.GROQ_KEY}`
+          "Authorization": `Bearer ${GROQ_KEY}`
         },
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
@@ -99,7 +103,7 @@ app.post("/api/chat", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${keys.MISTRAL_KEY}`
+          "Authorization": `Bearer ${MISTRAL_KEY}`
         },
         body: JSON.stringify({
           model: "mistral-small-latest",
@@ -120,7 +124,7 @@ app.post("/api/chat", async (req, res) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${keys.TOGETHER_KEY}`
+          "Authorization": `Bearer ${TOGETHER_KEY}`
         },
         body: JSON.stringify({
           model: modelName,
@@ -131,7 +135,6 @@ app.post("/api/chat", async (req, res) => {
         })
       });
       const data = await response.json();
-      // For image models, return the image URL instead
       return res.json({ image_url: data.data[0].url });
     }
 

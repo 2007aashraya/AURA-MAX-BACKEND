@@ -1,0 +1,8 @@
+{
+  "DEEPSEEK_KEY": "your-deepseek-api-key-here",
+  "GROQ_KEY": "your-groq-api-key-here",
+  "GEMINI_KEY": "your-gemini-api-key-here",
+  "MISTRAL_KEY": "your-mistral-api-key-here",
+  "TOGETHER_KEY": "your-together-api-key-here",
+  "QWEN_KEY": "your-qwen-api-key-here"
+}
